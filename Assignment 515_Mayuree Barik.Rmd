@@ -1,0 +1,91 @@
+---
+title: "Assignment 2"
+author: "Mayuree"
+date: '2022-06-15'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+#### Section 1: Data Description
+
+The Hatecrime Dataset  entails the details of the people who died due to Hate crime. It represents Median_household_Income which represents Median household Income,2021.It also represents Share of the population that is unemployed (seasonally adjusted) & metropolitan areas.Also, Share of adults 25 and older with a high-school degree & Share of the population that are not U.S. citizens
+Research Question is- Whether High Rates of Crimes is dependent to Income Inequality. Is there a correlation between median_household_income & hate_crimes_per_100k_splc
+Format of the File.This data is saved in CSV file format in github. This is a flat file. This is a delimited file & comma is the delimiter used in the file.
+
+
+
+#### Section 2: Reading the data into R
+```{r, echo = TRUE}
+url <- "https://raw.githubusercontent.com/fivethirtyeight/data/master/hate-crimes/hate_crimes.csv"
+data <- read.csv(url)
+```
+
+#### Section 3: Clean the data
+
+#### Renaming column names with upper case.
+
+```{r, echo = TRUE}
+library(tidyverse)
+data <- data %>%
+  rename_with(toupper)
+```
+
+#### Renaming columns to Hate_Crime and AVg_HateCrimes 
+```{r, echo=TRUE}
+data %>% 
+  rename(
+    Hate_Crime = HATE_CRIMES_PER_100K_SPLC,
+    Avg_HateCrimes = AVG_HATECRIMES_PER_100K_FBI
+  )
+
+```
+
+#### Section 4: Characteristics of the data
+This data frame has rows `r nrow(data)` and columns `r ncol(data)`. The names of the columns and a brief description of each are in the table below:
+
+```{r, echo = TRUE}
+Fields <- data.frame(
+                               `Column Name` = c('state',	'median_household_income',	'share_unemployed_seasonal','share_population_in_metro_areas',	
+                                                 'share_population_with_high_school_degree',	'share_non_citizen',	'share_white_poverty','gini_index',	
+                                                 'share_non_white','share_voters_voted_trump','hate_crimes_per_100k_splc','avg_hatecrimes_per_100k_fbi'),
+                               
+                                Description =  c('State name',
+                                                 'Median household income, 2016',
+                                                 'Share of the population that is unemployed (seasonally adjusted), Sept. 2016',
+                                                 'Share of the population that lives in metropolitan areas, 2015',
+                                                 'Share of adults 25 and older with a high-school degree, 2009',
+                                                 'Share of the population that are not U.S. citizens, 2015',
+                                                 'Share of white residents who are living in poverty, 2015',
+                                                 'Gini Index, 2015','Share of the population that is not white, 2015',
+                                                 'Share of 2016 U.S. presidential voters who voted for Donald Trump',
+                                                 'Hate crimes per 100,000 population, Southern Poverty Law Center, Nov. 9-18, 2016',
+                                                 'Average annual hate crimes per 100,000 population, FBI, 2010-2015'
+)
+)
+          
+library(knitr)                     
+kable(Fields)                           
+```
+
+#### Section 5: Summary Statistics
+##### missing values
+```{r echo=TRUE}
+# picking 3 columns from the data set
+data_filtered <- data[, c('STATE', 'MEDIAN_HOUSEHOLD_INCOME', 'SHARE_UNEMPLOYED_SEASONAL')]
+
+missing <- as.data.frame(lapply(data_filtered, function(x) sum(is.na(x))))
+
+missing <- rename(missing, state_missing_val = STATE, median_household_income_missing_val = MEDIAN_HOUSEHOLD_INCOME, share_unemployed_seasonal_missing_val = SHARE_UNEMPLOYED_SEASONAL)
+
+missing
+```
+
+```{r, echo = TRUE}
+# how to create an object
+summary_statistics <- summary(data_filtered)
+summary_statistics
+```
+
+
